@@ -1,5 +1,7 @@
 local PlayerData		= {}
 ESX							   = nil
+local sniperloaded = false
+local rifleloaded = false
 
 
 Citizen.CreateThread(function()
@@ -21,42 +23,46 @@ end)
 
 --rack Rifle
 RegisterCommand("unrack 1", function(source, args, rawCommand)
-	local ped = PlayerPedId()
-	local closestVehicle, Distance = ESX.Game.GetClosestVehicle()
-	local vehicleCoords = GetEntityCoords(closestVehicle)
-	local weapon =	GetHashKey("WEAPON_CARBINERIFLE")
-	local class = GetVehicleClass(closestVehicle)
-	local job	=	PlayerData.job
-	local grade = PlayerData.job.grade_name
+	if rifleloaded then
+		local ped = PlayerPedId()
+		local closestVehicle, Distance = ESX.Game.GetClosestVehicle()
+		local vehicleCoords = GetEntityCoords(closestVehicle)
+		local weapon =	GetHashKey("WEAPON_CARBINERIFLE")
+		local class = GetVehicleClass(closestVehicle)
+		local job	=	PlayerData.job
+		local grade = PlayerData.job.grade_name
 
-	if job ~= nil and job.name == 'police' and grade ~= 'recruit' then
-	if Distance < 2.0  and class == 18 and not IsPedInAnyVehicle(ped, false) then
-		TriggerEvent("mythic_progbar:client:progress", {
-			name = "action_rifle_unrack",
-			duration = 4000,
-			label = "Unracking Rifle...",
-			useWhileDead = false,
-			canCancel = false,
-			controlDisables = {
-				disableMovement = false,
-				disableCarMovement = true,
-				disableMouse = false,
-				disableCombat = true,
-			},
-			animation = {
-				animDict = "missheistdockssetup1clipboard@idle_a",
-				anim = "idle_a",
-			},
-			prop = {
-				model = "prop_paper_bag_small",
-			}
-		}, function(status)
-			if not status then
-				GiveWeaponToPed(ped, weapon, 120, false, true)
+		if job ~= nil and job.name == 'police' and grade ~= 'recruit' then
+			if Distance < 2.0  and class == 18 and not IsPedInAnyVehicle(ped, false) then
+				TriggerEvent("mythic_progbar:client:progress", {
+					name = "action_rifle_unrack",
+					duration = 4000,
+					label = "Unracking Rifle...",
+					useWhileDead = false,
+					canCancel = false,
+					controlDisables = {
+						disableMovement = false,
+						disableCarMovement = true,
+						disableMouse = false,
+						disableCombat = true,
+					},
+				animation = {
+					animDict = "missheistdockssetup1clipboard@idle_a",
+					anim = "idle_a",
+				},
+				prop = {
+					model = "prop_paper_bag_small",
+				}
+				}, function(status)
+					if not status then
+						GiveWeaponToPed(ped, weapon, 120, false, true)
+					end
+				end)
 			end
-		end)
+		end
+	else
+		print("No rifle was racked")
 	end
-end
 end, false)
 
 --rack a sniper
