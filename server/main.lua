@@ -13,3 +13,14 @@ AddEventHandler('esx:playerLoaded', function(xPlayer)
 
 end)
 
+RegisterNetEvent('rack:storeWeapon')
+AddEventHandler('rack:storeWeapon', function(steam, weapon, flash, mag, scope)
+	--change weapon stored for user
+
+end)
+
+RegisterNetEvent('rack:removeWeapon')
+AddEventHandler('rack:removeWeapon', function(steam)
+	--change weapon not stored for user and send back list of attachments
+
+end)
