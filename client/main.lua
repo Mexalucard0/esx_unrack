@@ -19,7 +19,8 @@ AddEventHandler('esx:setJob', function(job)
 	PlayerData.job = job
 end)
 
-RegisterCommand("unrack", function(source, args, rawCommand)
+--rack Rifle
+RegisterCommand("unrack 1", function(source, args, rawCommand)
 	local ped = PlayerPedId()
 	local closestVehicle, Distance = ESX.Game.GetClosestVehicle()
 	local vehicleCoords = GetEntityCoords(closestVehicle)
@@ -58,7 +59,47 @@ RegisterCommand("unrack", function(source, args, rawCommand)
 end
 end, false)
 
-RegisterCommand("rack", function(source, args, rawCommand)
+--rack a sniper
+RegisterCommand("unrack 2", function(source, args, rawCommand)
+	local ped = PlayerPedId()
+	local closestVehicle, Distance = ESX.Game.GetClosestVehicle()
+	local vehicleCoords = GetEntityCoords(closestVehicle)
+	local weapon =	GetHashKey("WEAPON_SNIPER")
+	local class = GetVehicleClass(closestVehicle)
+	local job	=	PlayerData.job
+	local grade = PlayerData.job.grade_name
+
+	if job ~= nil and job.name == 'police' and grade ~= 'recruit' then
+	if Distance < 2.0  and class == 18 and not IsPedInAnyVehicle(ped, false) then
+		TriggerEvent("mythic_progbar:client:progress", {
+			name = "action_sniper_unrack",
+			duration = 4000,
+			label = "Unracking Sniper...",
+			useWhileDead = false,
+			canCancel = false,
+			controlDisables = {
+				disableMovement = false,
+				disableCarMovement = true,
+				disableMouse = false,
+				disableCombat = true,
+			},
+			animation = {
+				animDict = "missheistdockssetup1clipboard@idle_a",
+				anim = "idle_a",
+			},
+			prop = {
+				model = "prop_paper_bag_small",
+			}
+		}, function(status)
+			if not status then
+				GiveWeaponToPed(ped, weapon, 120, false, true)
+			end
+		end)
+	end
+end
+end, false)
+
+RegisterCommand("rack 1", function(source, args, rawCommand)
 	local ped = PlayerPedId()
 	local closestVehicle, Distance = ESX.Game.GetClosestVehicle()
 	local vehicleCoords = GetEntityCoords(closestVehicle)
@@ -73,6 +114,46 @@ RegisterCommand("rack", function(source, args, rawCommand)
 			name = "action_rack_rifle",
 			duration = 4000,
 			label = "Racking Rifle",
+			useWhileDead = false,
+			canCancel = true,
+			controlDisables = {
+				disableMovement = false,
+				disableCarMovement = true,
+				disableMouse = false,
+				disableCombat = true,
+			},
+			animation = {
+				animDict = "missheistdockssetup1clipboard@idle_a",
+				anim = "idle_a",
+			},
+			prop = {
+				model = "prop_paper_bag_small",
+			}
+		}, function(status)
+			if not status then
+				RemoveWeaponFromPed(ped, weapon)
+			end
+		end)
+	end
+end
+end, false)
+
+-- store sniper
+RegisterCommand("rack 2", function(source, args, rawCommand)
+	local ped = PlayerPedId()
+	local closestVehicle, Distance = ESX.Game.GetClosestVehicle()
+	local vehicleCoords = GetEntityCoords(closestVehicle)
+	local weapon =	GetHashKey("WEAPON_SNIPER")
+	local class = GetVehicleClass(closestVehicle)
+	local job	=	PlayerData.job
+	local grade = PlayerData.job.grade_name
+
+	if job ~= nil and job.name == 'police' and grade ~= 'recruit' then
+	if Distance < 2.0  and class == 18 and not IsPedInAnyVehicle(ped, false) then
+		TriggerEvent("mythic_progbar:client:progress", {
+			name = "action_rack_sniper",
+			duration = 4000,
+			label = "Racking Sniper",
 			useWhileDead = false,
 			canCancel = true,
 			controlDisables = {
